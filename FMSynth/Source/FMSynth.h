@@ -130,7 +130,7 @@ public:
     void stopNote(float /*velocity*/, bool allowTailOff) override
     {
         //env1.noteOff();
-        operator1.stopNote(); 1
+        operator1.stopNote();
         ending = true;
         
     }
