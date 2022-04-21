@@ -46,12 +46,17 @@ public:
 
     FMSynthVoice() {}
 
-    /**
-    Function to initialise sample rate
-    
-    @param sampleRate
 
-    */
+    //-------------------------------------------------------------------------
+    /**
+     Set the envelope parameter pointers after
+
+     @param attack
+     @param decay
+     @param sustain
+     @param release
+
+     */
 
     void setEnvelopeParameterPointers(
 
@@ -71,15 +76,17 @@ public:
         release1 = attack1In;
     }
 
+    /**
+    Function to initialise sample rate
+
+     @param sampleRate
+
+    */
+
+
     void initialise(float sampleRate)
     {
         operator1.setSampleRate(sampleRate);
-      /*  operator2.setSampleRate(sampleRate);
-        operator3.setSampleRate(sampleRate);
-        operator4.setSampleRate(sampleRate);*/
-
-        //env1.setSampleRate(sampleRate);
-     
 
     }
   
@@ -103,22 +110,9 @@ public:
 
         operator1.setEnvelope(*attack1, *decay1, *sustain1, *release1);
 
-       /* operator2.setFrequency(frequency);
-        operator3.setFrequency(frequency);
-        operator4.setFrequency(frequency);*/
-      /*  env1.reset();
-        env1.noteOn();*/
-
-       /* juce::ADSR::Parameters env1Params;
-     
-        env1Params.attack = *attack1;
-        env1Params.decay = *decay1;
-        env1Params.release = *release1;
-        env1Params.sustain = *sustain1;
-
-        env1.setParameters(env1Params);*/
        
     }
+
     //--------------------------------------------------------------------------
     /// Called when a MIDI noteOff message is received
     /**
@@ -129,22 +123,11 @@ public:
      */
     void stopNote(float /*velocity*/, bool allowTailOff) override
     {
-        //env1.noteOff();
+        
         operator1.stopNote();
         ending = true;
         
     }
-
-    //-------------------------------------------------------------------------
-    /**
-     Set the envelope parameter pointers after 
-
-     @param attack
-     @param decay
-     @param sustain
-     @param release
-
-     */
     
 
   /*  void setWaveTypeParameterPointer(std::atomic<float>* waveTypeIn)
@@ -170,16 +153,11 @@ public:
             // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
-                // your sample-by-sample DSP code here!
-
-                //float env1Val = env1.getNextSample();
                 
                 float operator1Process = operator1.process() * operator1.getEnvelopeVal();
-              /*  float operator2Process = operator2.triangleProcess();
-                float operator3Process = operator3.squareProcess();
-                float operator4Process = operator4.sawProcess();*/
+           
 
-                float currentSample = operator1Process; //+ operator2Process + operator3Process + operator4Process)/4) * env1Val;
+                float currentSample = operator1Process; 
                 
                 // for each channel, write the currentSample float to the output
                 for (int chan = 0; chan<outputBuffer.getNumChannels(); chan++)
@@ -230,26 +208,22 @@ private:
 
     float envValue = operator1.getEnvelopeVal();
 
-        //Wavetype selection parameters 
+    //Wavetype selection parameters 
 
-        //std::atomic<float>* waveType;
+    //std::atomic<float>* waveType;
 
-        //Envelope parameters 
+    //Envelope parameters 
 
-        std::atomic<float>* attack1; 
-        std::atomic<float>* decay1;
-        std::atomic<float>* sustain1;
-        std::atomic<float>* release1;
+    std::atomic<float>* attack1; 
+    std::atomic<float>* decay1;
+    std::atomic<float>* sustain1;
+    std::atomic<float>* release1;
 
 
-        // Operators
+    // Operators
 
     Operator operator1; //operator2, operator3, operator4;
 
-    //Oscillator operator1, operator2, operator3, operator4;
-
-
-    //juce::ADSR env1;
 
    
 };
