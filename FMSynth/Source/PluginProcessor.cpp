@@ -53,7 +53,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 
     
 
-    waveTypeParamInt = static_cast<std::atomic<int>>(*waveTypeParam);
+    
 
     for (int i = 0; i < voiceCount; i++)
     {

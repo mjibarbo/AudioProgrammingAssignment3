@@ -64,6 +64,7 @@ private:
     //juce::AudioParameterChoice waveTypeParam;
 
     std::atomic<float>* waveTypeParam;
+    std::atomic<float>* waveTypeParamInt;
 
     // Envelope Parameters
     std::atomic<float>* attack1Param;

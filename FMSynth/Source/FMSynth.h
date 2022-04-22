@@ -130,7 +130,7 @@ public:
     }
     
 
-    void setWaveTypeParameterPointer(std::atomic<int>* waveTypeIn)
+    void setWaveTypeParameterPointer(std::atomic<float>* waveTypeIn)
     {
         operator1.setWaveTypeParameterPointer(waveTypeIn);
     }
@@ -153,6 +153,7 @@ public:
             // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
+                
                 
                 float operator1Process = operator1.process() * operator1.getEnvelopeVal();
            
@@ -210,7 +211,7 @@ private:
 
     //Wavetype selection parameters 
 
-    std::atomic<int>* waveType;
+    std::atomic<float>* waveType;
 
     //Envelope parameters 
 
