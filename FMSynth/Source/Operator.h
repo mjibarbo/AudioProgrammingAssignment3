@@ -52,7 +52,7 @@ public:
 
     }
 
-    void setWaveTypeParameterPointer(std::atomic<int>* waveTypeIn)
+    void setWaveTypeParameterPointer(std::atomic<float>* waveTypeIn)
     {
         waveType = waveTypeIn;
     }
@@ -138,7 +138,7 @@ private:
 
     //Wavetype selection parameters 
 
-    std::atomic<int>* waveType;
+    std::atomic<float>* waveType;
 
     float output;
 
