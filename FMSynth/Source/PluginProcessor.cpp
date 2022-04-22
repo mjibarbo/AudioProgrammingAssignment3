@@ -51,13 +51,11 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 
     synth.addSound(new FMSynthSound);
 
-    waveTypeParamInt = static_cast<std::atomic<int>>(*waveTypeParam);
-
     for (int i = 0; i < voiceCount; i++)
     {
         FMSynthVoice* v = dynamic_cast<FMSynthVoice*>(synth.getVoice(i));
         v->setEnvelopeParameterPointers(attack1Param, decay1Param, sustain1Param, release1Param);
-        v-> setWaveTypeParameterPointer(waveTypeParam);
+        v-> setWaveTypeParameterPointer(static_cast<std::atomic<int>*>(waveTypeParam));
     }
 
 
