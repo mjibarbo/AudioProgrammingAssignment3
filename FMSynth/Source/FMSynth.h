@@ -72,8 +72,8 @@ public:
     {
         attack1 = attack1In;
         decay1 = decay1In;
-        sustain1 = attack1In;
-        release1 = attack1In;
+        sustain1 = sustain1In;
+        release1 = release1In;
     }
 
     /**
