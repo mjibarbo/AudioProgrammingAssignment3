@@ -130,10 +130,10 @@ public:
     }
     
 
-  /*  void setWaveTypeParameterPointer(std::atomic<float>* waveTypeIn)
+    void setWaveTypeParameterPointer(std::atomic<int>* waveTypeIn)
     {
-        waveType = waveTypeIn;
-    }*/
+        operator1.setWaveTypeParameterPointer(waveTypeIn);
+    }
  
 
     //--------------------------------------------------------------------------
@@ -210,7 +210,7 @@ private:
 
     //Wavetype selection parameters 
 
-    //std::atomic<float>* waveType;
+    std::atomic<int>* waveType;
 
     //Envelope parameters 
 

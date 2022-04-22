@@ -52,7 +52,7 @@ public:
 
     }
 
-    void setWaveTypeParameterPointer(std::atomic<float>* waveTypeIn)
+    void setWaveTypeParameterPointer(std::atomic<int>* waveTypeIn)
     {
         waveType = waveTypeIn;
     }
@@ -67,7 +67,7 @@ public:
 
    void setWaveType(WaveType newWaveType)
    {
-       switch (static_cast<WaveType>(static_cast<float>(*waveType)))
+       switch (static_cast<WaveType>(static_cast<int>(*waveType)))
        {
        case WaveType::Sine:
 
@@ -138,7 +138,7 @@ private:
 
     //Wavetype selection parameters 
 
-    std::atomic<float>* waveType;
+    std::atomic<int>* waveType;
 
     float output;
 

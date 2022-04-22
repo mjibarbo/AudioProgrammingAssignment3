@@ -36,7 +36,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 {
 /// CONSTRUCTOR ///
 
-    //waveTypeParam = parameters.getRawParameterValue("waveType");
+    waveTypeParam = parameters.getRawParameterValue("waveType");
     attack1Param = parameters.getRawParameterValue("attack1");
     decay1Param = parameters.getRawParameterValue("decay1");
     sustain1Param = parameters.getRawParameterValue("sustain1");
@@ -55,7 +55,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     {
         FMSynthVoice* v = dynamic_cast<FMSynthVoice*>(synth.getVoice(i));
         v->setEnvelopeParameterPointers(attack1Param, decay1Param, sustain1Param, release1Param);
-        //v-> setWaveTypeParameterPointer(waveTypeParam);
+        v-> setWaveTypeParameterPointer(static_cast<std::atomic<int>*>(waveTypeParam));
     }
 
 
