@@ -130,9 +130,11 @@ public:
     }
     
 
-    void setWaveTypeParameterPointer(std::atomic<float>* waveTypeIn)
+    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
     {
-        operator1.setWaveTypeParameterPointer(waveTypeIn);
+       
+        waveType = waveTypeIn;
+        
     }
  
 
@@ -154,6 +156,7 @@ public:
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
                 
+                operator1.setWaveTypeFromParameterPointer(waveType);
                 
                 float operator1Process = operator1.process() * operator1.getEnvelopeVal();
            

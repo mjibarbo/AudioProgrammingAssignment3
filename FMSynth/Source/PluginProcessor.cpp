@@ -59,7 +59,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     {
         FMSynthVoice* v = dynamic_cast<FMSynthVoice*>(synth.getVoice(i));
         v->setEnvelopeParameterPointers(attack1Param, decay1Param, sustain1Param, release1Param);
-        v-> setWaveTypeParameterPointer(waveTypeParam);
+        v-> setWaveTypeFromParameterPointer(waveTypeParam);
     }
 
 
