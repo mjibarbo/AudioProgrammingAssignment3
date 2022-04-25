@@ -155,7 +155,8 @@ public:
             // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
-                
+                float envValue = operator1.getEnvelopeVal();
+
                 operator1.setWaveTypeFromParameterPointer(waveType);
                 
                 float operator1Process = operator1.process() * operator1.getEnvelopeVal();
@@ -169,6 +170,8 @@ public:
                     // The output sample is scaled by 0.2 so that it is not too loud by default
                     outputBuffer.addSample (chan, sampleIndex, currentSample * 0.2);
                 }
+
+                
 
                 if (ending)
                 {
@@ -210,7 +213,7 @@ private:
 
     float frequency;
 
-    float envValue = operator1.getEnvelopeVal();
+    
 
     //Wavetype selection parameters 
 

@@ -111,7 +111,7 @@ public:
 
    float process()
    {
-       //output = osc.sineProcess();
+       output = osc.sineProcess();
        return output;
    }
 
