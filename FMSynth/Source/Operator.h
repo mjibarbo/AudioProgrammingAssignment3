@@ -54,7 +54,7 @@ public:
 
     void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
     {
-        int waveTypeParamInt = static_cast<int>(*waveTypeIn);
+        waveTypeParamInt = static_cast<int>(*waveTypeIn);
     }
 
     //-------------------------------------------------------------------------
@@ -95,7 +95,7 @@ public:
 
        default:
 
-           osc.sineProcess();
+           output = osc.sineProcess();
 
 
        }
