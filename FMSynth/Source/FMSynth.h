@@ -11,6 +11,7 @@
 #pragma once
 #include "Oscillator.h"
 #include "Operator.h"
+#include "LFO.h"
 
 // ===========================
 // ===========================
@@ -104,7 +105,7 @@ public:
     {
         playing = true;
         ending = false; 
-        frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
+        float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
 
         operator1.setFrequency(frequency);
 
@@ -159,7 +160,7 @@ public:
 
                 operator1.setWaveTypeFromParameterPointer(waveType);
                 
-                float operator1Process = operator1.process() * operator1.getEnvelopeVal();
+                float operator1Process = operator1.process() * envValue;
            
 
                 float currentSample = operator1Process; 
@@ -170,8 +171,6 @@ public:
                     // The output sample is scaled by 0.2 so that it is not too loud by default
                     outputBuffer.addSample (chan, sampleIndex, currentSample * 0.2);
                 }
-
-                
 
                 if (ending)
                 {
@@ -208,13 +207,7 @@ private:
     bool playing = false;
     bool ending = false; 
 
-
-    //DSP Parameters
-
-    float frequency;
-
     
-
     //Wavetype selection parameters 
 
     std::atomic<float>* waveType;
