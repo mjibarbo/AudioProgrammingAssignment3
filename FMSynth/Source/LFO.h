@@ -23,16 +23,13 @@ public:
         osc.setSampleRate(_sampleRate);
     }
 
-    void setFrequency(float _frequency)
+    void setFrequency(std::atomic<float>* frequencyIn)
     {
-        osc.setFrequency(_frequency);
+
+        osc.setFrequency(*frequencyIn);
     }
 
-    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
-    {
-        waveTypeParamInt = static_cast<int>(*waveTypeIn);
-    }
-
+  
     void setWaveType(WaveType newWaveType)
     {
         switch (static_cast<WaveType>(waveTypeParamInt))
@@ -69,9 +66,16 @@ public:
         }
     }
 
+    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
+    {
+        waveTypeParamInt = static_cast<int>(*waveTypeIn);
+        wavetype = static_cast<WaveType>(waveTypeParamInt);
+        setWaveType(wavetype);
+    }
+
+
     float process()
     {
-        output = osc.sineProcess();
         return output;
     }
 
@@ -79,9 +83,13 @@ private:
 
     Oscillator osc;
 
+    float frequency;
+
     float output;
 
     int waveTypeParamInt;
+
+    LFO::WaveType wavetype;
 
 
 };

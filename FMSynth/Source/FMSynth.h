@@ -85,9 +85,10 @@ public:
     */
 
 
-    void initialise(float sampleRate)
+    void setSampleRate(float sampleRate)
     {
         operator1.setSampleRate(sampleRate);
+        lfo1.setSampleRate(sampleRate);
 
     }
 
@@ -120,7 +121,13 @@ public:
 
         operator1.setEnvelope(*attack1, *decay1, *sustain1, *release1);
 
+
        
+    }
+
+    void setFrequencyFromParameterPointer(std::atomic<float>* frequencyIn)
+    {
+        lfo1.setFrequency(frequencyIn);
     }
 
     //--------------------------------------------------------------------------
@@ -140,10 +147,12 @@ public:
     }
     
 
-    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
+    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn, std::atomic<float>* lfowaveTypeIn)
     {
        
         waveType = waveTypeIn;
+        lfowaveType = lfowaveTypeIn;
+
         
     }
   
@@ -165,11 +174,18 @@ public:
             // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
+
+                //Operator
+
                 float envValue = operator1.getEnvelopeVal();
 
                 operator1.setWaveTypeFromParameterPointer(waveType);
                 
                 float operator1Process = operator1.process(amount1) * envValue;
+
+                //LFO
+
+                lfo1.setWaveTypeFromParameterPointer(lfowaveType);
            
 
                 float currentSample = operator1Process; 
@@ -221,9 +237,13 @@ private:
     std::atomic<float>* amount1;
     std::atomic<float>* ratio1;
 
-    //Wavetype selection parameters 
+    //Operator Wavetype selection parameters 
 
     std::atomic<float>* waveType;
+
+    //LFO Wavetype selection parameters 
+
+    std::atomic<float>* lfowaveType;
 
     //Envelope parameters 
 
@@ -236,6 +256,10 @@ private:
     // Operators
 
     Operator operator1; //operator2, operator3, operator4;
+
+    //LFO
+
+    LFO lfo1;
 
 
    

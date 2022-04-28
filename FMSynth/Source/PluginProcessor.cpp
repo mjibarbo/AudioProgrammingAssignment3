@@ -37,7 +37,14 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     std::make_unique<juce::AudioParameterFloat>("release1","Release",0.0f,3.0f,0.5f),
 
     //Operator Wavetype selection parameters 
-    std::make_unique<juce::AudioParameterChoice>("waveType","Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
+    std::make_unique<juce::AudioParameterChoice>("waveType1","Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
+
+    //LFO DSP Parameters 
+
+    std::make_unique<juce::AudioParameterFloat>("lfoFreq1","LFO Ratio",0.05f,16.0f,1.0f),
+
+    //LFO Wavetype sleection parameters
+    std::make_unique<juce::AudioParameterChoice>("lfowaveType1","Shape",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
 
         })
 {
@@ -54,7 +61,14 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     release1Param = parameters.getRawParameterValue("release1");
 
     //Operator Wavetype selection parameters
-    waveTypeParam = parameters.getRawParameterValue("waveType");
+    waveTypeParam = parameters.getRawParameterValue("waveType1");
+
+    //LFO DSP Parameters 
+
+    lfo1Freq = parameters.getRawParameterValue("lfoFreq1");
+
+    //LFO Wavetype sleection parameters
+    lfowaveTypeParam = parameters.getRawParameterValue("lfowaveType1");
 
 
     //Add a voice to the synth depending on voiceCount
@@ -73,8 +87,9 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     {
         FMSynthVoice* v = dynamic_cast<FMSynthVoice*>(synth.getVoice(i));
         v->setEnvelopeParameterPointers(attack1Param, decay1Param, sustain1Param, release1Param);
-        v-> setWaveTypeFromParameterPointer(waveTypeParam);
+        v-> setWaveTypeFromParameterPointer(waveTypeParam, lfowaveTypeParam);
         v->setOperatorDSPFromParameterPointer(amount1Param,ratio1Param);
+        v->setFrequencyFromParameterPointer(lfo1Freq);
     }
 
 
@@ -156,7 +171,7 @@ void FMSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBloc
     for (int i = 0; i < voiceCount; i++)
     {
         FMSynthVoice* v = dynamic_cast<FMSynthVoice*>(synth.getVoice(i));
-        v->initialise(sampleRate);
+        v->setSampleRate(sampleRate);
     }
 }
 
