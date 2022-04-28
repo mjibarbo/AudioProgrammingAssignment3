@@ -59,15 +59,23 @@ private:
     /// Parameters 
     juce::AudioProcessorValueTreeState parameters; 
 
-    //Operator DSP Parameters
+    //Operator 1 DSP Parameters
 
     std::atomic<float>* amount1Param;
     std::atomic<float>* ratio1Param;
 
-    //Operator Waveform selection parameters
+    //Operator 1 Waveform selection parameters
 
     std::atomic<float>* waveTypeParam;
-    std::atomic<float>* waveTypeParamInt;
+
+    //Operator 2 DSP Parameters
+
+    std::atomic<float>* amount2Param;
+    std::atomic<float>* ratio2Param;
+
+    //Operator 2 Waveform selection parameters
+
+    std::atomic<float>* waveType2Param;
 
     //LFO DSP Parameters
 

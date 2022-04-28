@@ -64,19 +64,8 @@ public:
         std::atomic<float>* attack1In,
         std::atomic<float>* decay1In,
         std::atomic<float>* sustain1In,
-        std::atomic<float>* release1In,
-        std::atomic<float>* attack2In,
-        std::atomic<float>* decay2In,
-        std::atomic<float>* sustain2In,
-        std::atomic<float>* release2In,
-        std::atomic<float>* attack3In,
-        std::atomic<float>* decay3In,
-        std::atomic<float>* sustain3In,
-        std::atomic<float>* release3In,
-        std::atomic<float>* attack4In,
-        std::atomic<float>* decay4In,
-        std::atomic<float>* sustain4In,
-        std::atomic<float>* release4In
+        std::atomic<float>* release1In
+   
 
     )
     {
@@ -85,20 +74,6 @@ public:
         sustain1 = sustain1In;
         release1 = release1In;
 
-        attack2 = attack2In;
-        decay2 = decay2In;
-        sustain2 = sustain2In;
-        release2 = release2In;
-
-        attack3 = attack3In;
-        decay3 = decay3In;
-        sustain3 = sustain3In;
-        release3 = release3In;
-
-        attack4 = attack4In;
-        decay4 = decay4In;
-        sustain4 = sustain4In;
-        release4 = release4In;
     }
 
     /**
@@ -116,13 +91,22 @@ public:
         operator3.setSampleRate(sampleRate);
         operator4.setSampleRate(sampleRate);
         lfo1.setSampleRate(sampleRate);
+        env1.setSampleRate(sampleRate);
 
     }
 
-    void setOperatorDSPFromParameterPointer(std::atomic<float>* amountIn, std::atomic<float>* ratioIn)
+    void setOperatorDSPFromParameterPointer(
+        std::atomic<float>* amountIn, 
+        std::atomic<float>* ratioIn, 
+        std::atomic<float>* amount2In, 
+        std::atomic<float>* ratio2In
+    )
     {
         amount1 = amountIn;
         ratio1 = ratioIn;
+
+        amount2 = amount2In;
+        ratio2 = ratio2In;
     
 
     }
@@ -146,7 +130,19 @@ public:
 
         operator1.setFrequency(frequency);
 
-        operator1.setEnvelope(*attack1, *decay1, *sustain1, *release1);
+        //Envelope 
+
+        env1.reset();
+        env1.noteOn();
+
+        juce::ADSR::Parameters env1Params;
+
+        env1Params.attack = *attack1;
+        env1Params.decay = *decay1;
+        env1Params.release = *release1;
+        env1Params.sustain = *sustain1;
+
+        env1.setParameters(env1Params);
 
 
        
@@ -168,7 +164,7 @@ public:
     void stopNote(float /*velocity*/, bool allowTailOff) override
     {
         
-        operator1.stopNote();
+        env1.noteOff();
         ending = true;
         
     }
@@ -202,21 +198,30 @@ public:
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
 
-                //Operator
+                
 
-                float envValue = operator1.getEnvelopeVal();
+                //Operators
 
                 operator1.setWaveTypeFromParameterPointer(waveType);
                 
-                float operator1Process = operator1.process(amount1) * envValue;
+                float operator1Process = operator1.process() * *amount1;
+
+             /*   operator2.setFrequency((operator1Process * (*amount2 - 50) + 50));
+                operator2.setWaveTypeFromParameterPointer(waveType2);
+
+                float operator2Process = operator2.process();*/
 
                 //LFO
 
                 lfo1.setWaveTypeFromParameterPointer(lfowaveType);
                 lfo1.process();
+
+                //Envelope
+
+                float envValue = env1.getNextSample();
            
 
-                float currentSample = operator1Process; 
+                float currentSample = operator1Process; //+ operator2Process)/2) * envValue; 
                 
                 // for each channel, write the currentSample float to the output
                 for (int chan = 0; chan<outputBuffer.getNumChannels(); chan++)
@@ -269,27 +274,23 @@ private:
 
     std::atomic<float>* waveType;
 
-    //Operator Envelope parameters 
+    //Operator 2 DSP Parameters
+
+    std::atomic<float>* amount2;
+    std::atomic<float>* ratio2;
+
+    //Operator Wavetype selection parameters 
+
+    std::atomic<float>* waveType2;
+
+    //Envelope parameters 
 
     std::atomic<float>* attack1; 
     std::atomic<float>* decay1;
     std::atomic<float>* sustain1;
     std::atomic<float>* release1;
 
-    std::atomic<float>* attack2;
-    std::atomic<float>* decay2;
-    std::atomic<float>* sustain2;
-    std::atomic<float>* release2;
-
-    std::atomic<float>* attack3;
-    std::atomic<float>* decay3;
-    std::atomic<float>* sustain3;
-    std::atomic<float>* release3;
-
-    std::atomic<float>* attack4;
-    std::atomic<float>* decay4;
-    std::atomic<float>* sustain4;
-    std::atomic<float>* release4;
+    juce::ADSR env1;
 
     //LFO Wavetype selection parameters 
 

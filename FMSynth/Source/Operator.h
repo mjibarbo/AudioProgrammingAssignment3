@@ -21,7 +21,7 @@ public:
     void setSampleRate(float _sampleRate)
     {
         osc.setSampleRate(_sampleRate);
-        env1.setSampleRate(_sampleRate);
+        
     }
 
     void setFrequency(float _frequency)
@@ -29,29 +29,6 @@ public:
         osc.setFrequency(_frequency);
     }
     
-    void setEnvelope(float _attack1, float _decay1, float _release1, float _sustain1)
-    {
-
-        env1.reset();
-        env1.noteOn();
-
-        juce::ADSR::Parameters env1Params;
-
-        env1Params.attack = _attack1;
-        env1Params.decay = _decay1;
-        env1Params.release = _release1;
-        env1Params.sustain = _sustain1;
-
-        env1.setParameters(env1Params);
-    }
-
-  
-
-    void stopNote()
-    {
-        env1.noteOff();
-
-    }
 
    
 
@@ -107,16 +84,10 @@ public:
        setWaveType(wavetype);
    }
 
-   float getEnvelopeVal()
-   {
-       envVal = env1.getNextSample();
-       return envVal;
-   }
 
-   float process(std::atomic<float>* amountIn)
+   float process()
    {
-       float amount = *amountIn;
-       //output = osc.sineProcess() * amount;
+       
        return output;
    }
 
@@ -137,9 +108,6 @@ private:
     std::atomic<float>* sustain1;
     std::atomic<float>* release1;
     
-    juce::ADSR env1;
-
-    float envVal;
 
     //Wavetype selection parameters 
 
