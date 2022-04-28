@@ -64,12 +64,18 @@ private:
     std::atomic<float>* amount1Param;
     std::atomic<float>* ratio1Param;
 
-    //Waveform selection parameters
-
-    //juce::AudioParameterChoice waveTypeParam;
+    //Operator Waveform selection parameters
 
     std::atomic<float>* waveTypeParam;
     std::atomic<float>* waveTypeParamInt;
+
+    //LFO DSP Parameters
+
+    std::atomic<float>* lfo1Freq;
+
+    //LFO Waveform selection parameters
+
+    std::atomic<float>* lfowaveTypeParam;
 
     // Envelope Parameters
     std::atomic<float>* attack1Param;

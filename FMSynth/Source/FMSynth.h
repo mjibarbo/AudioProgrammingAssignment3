@@ -62,12 +62,21 @@ public:
     void setEnvelopeParameterPointers(
 
         std::atomic<float>* attack1In,
-
         std::atomic<float>* decay1In,
-
         std::atomic<float>* sustain1In,
-
-        std::atomic<float>* release1In
+        std::atomic<float>* release1In,
+        std::atomic<float>* attack2In,
+        std::atomic<float>* decay2In,
+        std::atomic<float>* sustain2In,
+        std::atomic<float>* release2In,
+        std::atomic<float>* attack3In,
+        std::atomic<float>* decay3In,
+        std::atomic<float>* sustain3In,
+        std::atomic<float>* release3In,
+        std::atomic<float>* attack4In,
+        std::atomic<float>* decay4In,
+        std::atomic<float>* sustain4In,
+        std::atomic<float>* release4In
 
     )
     {
@@ -75,6 +84,21 @@ public:
         decay1 = decay1In;
         sustain1 = sustain1In;
         release1 = release1In;
+
+        attack2 = attack2In;
+        decay2 = decay2In;
+        sustain2 = sustain2In;
+        release2 = release2In;
+
+        attack3 = attack3In;
+        decay3 = decay3In;
+        sustain3 = sustain3In;
+        release3 = release3In;
+
+        attack4 = attack4In;
+        decay4 = decay4In;
+        sustain4 = sustain4In;
+        release4 = release4In;
     }
 
     /**
@@ -85,9 +109,13 @@ public:
     */
 
 
-    void initialise(float sampleRate)
+    void setSampleRate(float sampleRate)
     {
         operator1.setSampleRate(sampleRate);
+        operator2.setSampleRate(sampleRate);
+        operator3.setSampleRate(sampleRate);
+        operator4.setSampleRate(sampleRate);
+        lfo1.setSampleRate(sampleRate);
 
     }
 
@@ -120,7 +148,13 @@ public:
 
         operator1.setEnvelope(*attack1, *decay1, *sustain1, *release1);
 
+
        
+    }
+
+    void setFrequencyFromParameterPointer(std::atomic<float>* frequencyIn)
+    {
+        lfo1.setFrequency(frequencyIn);
     }
 
     //--------------------------------------------------------------------------
@@ -140,10 +174,12 @@ public:
     }
     
 
-    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
+    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn, std::atomic<float>* lfowaveTypeIn)
     {
        
         waveType = waveTypeIn;
+        lfowaveType = lfowaveTypeIn;
+
         
     }
   
@@ -165,11 +201,19 @@ public:
             // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
+
+                //Operator
+
                 float envValue = operator1.getEnvelopeVal();
 
                 operator1.setWaveTypeFromParameterPointer(waveType);
                 
                 float operator1Process = operator1.process(amount1) * envValue;
+
+                //LFO
+
+                lfo1.setWaveTypeFromParameterPointer(lfowaveType);
+                lfo1.process();
            
 
                 float currentSample = operator1Process; 
@@ -221,21 +265,44 @@ private:
     std::atomic<float>* amount1;
     std::atomic<float>* ratio1;
 
-    //Wavetype selection parameters 
+    //Operator Wavetype selection parameters 
 
     std::atomic<float>* waveType;
 
-    //Envelope parameters 
+    //Operator Envelope parameters 
 
     std::atomic<float>* attack1; 
     std::atomic<float>* decay1;
     std::atomic<float>* sustain1;
     std::atomic<float>* release1;
 
+    std::atomic<float>* attack2;
+    std::atomic<float>* decay2;
+    std::atomic<float>* sustain2;
+    std::atomic<float>* release2;
+
+    std::atomic<float>* attack3;
+    std::atomic<float>* decay3;
+    std::atomic<float>* sustain3;
+    std::atomic<float>* release3;
+
+    std::atomic<float>* attack4;
+    std::atomic<float>* decay4;
+    std::atomic<float>* sustain4;
+    std::atomic<float>* release4;
+
+    //LFO Wavetype selection parameters 
+
+    std::atomic<float>* lfowaveType;
+
 
     // Operators
 
-    Operator operator1; //operator2, operator3, operator4;
+    Operator operator1, operator2, operator3, operator4;
+
+    //LFO
+
+    LFO lfo1;
 
 
    
