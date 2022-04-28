@@ -15,6 +15,7 @@ class Operator
 
 {
     enum class WaveType { Sine, Triangle, Square, Saw };
+
 public: 
 
     void setSampleRate(float _sampleRate)
@@ -52,10 +53,7 @@ public:
 
     }
 
-    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
-    {
-        waveTypeParamInt = static_cast<int>(*waveTypeIn);
-    }
+   
 
     //-------------------------------------------------------------------------
  /**
@@ -67,7 +65,8 @@ public:
 
    void setWaveType(WaveType newWaveType)
    {
-       switch (static_cast<WaveType>(waveTypeParamInt))
+
+       switch (newWaveType)
        {
        case WaveType::Sine:
 
@@ -101,7 +100,12 @@ public:
        }
    }
 
- 
+   void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
+   {
+       waveTypeParamInt = static_cast<int>(*waveTypeIn);
+       wavetype = static_cast<WaveType>(waveTypeParamInt);
+       setWaveType(wavetype);
+   }
 
    float getEnvelopeVal()
    {
@@ -109,9 +113,10 @@ public:
        return envVal;
    }
 
-   float process()
+   float process(std::atomic<float>* amountIn)
    {
-       output = osc.sineProcess();
+       float amount = *amountIn;
+       //output = osc.sineProcess() * amount;
        return output;
    }
 
@@ -139,6 +144,8 @@ private:
     //Wavetype selection parameters 
 
     int waveTypeParamInt;
+
+    Operator::WaveType wavetype;
 
     float output;
 

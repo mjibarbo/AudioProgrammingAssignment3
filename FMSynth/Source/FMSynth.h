@@ -90,6 +90,15 @@ public:
         operator1.setSampleRate(sampleRate);
 
     }
+
+    void setOperatorDSPFromParameterPointer(std::atomic<float>* amountIn, std::atomic<float>* ratioIn)
+    {
+        amount1 = amountIn;
+        ratio1 = ratioIn;
+    
+
+    }
+
   
 
     //--------------------------------------------------------------------------
@@ -105,7 +114,7 @@ public:
     {
         playing = true;
         ending = false; 
-        float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
+        float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber) + *ratio1;
 
         operator1.setFrequency(frequency);
 
@@ -137,7 +146,7 @@ public:
         waveType = waveTypeIn;
         
     }
- 
+  
 
     //--------------------------------------------------------------------------
     /**
@@ -160,7 +169,7 @@ public:
 
                 operator1.setWaveTypeFromParameterPointer(waveType);
                 
-                float operator1Process = operator1.process() * envValue;
+                float operator1Process = operator1.process(amount1) * envValue;
            
 
                 float currentSample = operator1Process; 
@@ -207,7 +216,11 @@ private:
     bool playing = false;
     bool ending = false; 
 
-    
+    //Operator DSP Parameters
+
+    std::atomic<float>* amount1;
+    std::atomic<float>* ratio1;
+
     //Wavetype selection parameters 
 
     std::atomic<float>* waveType;

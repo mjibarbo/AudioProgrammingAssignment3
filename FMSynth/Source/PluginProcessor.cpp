@@ -24,23 +24,37 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 
     parameters(*this, nullptr, "ParamTreeID", {
 
-    //Envelope parameters
+    //Operator DSP Parameters
+
+     std::make_unique<juce::AudioParameterFloat>("amount1","Mod Amount",0.0f,1.0f,0.5f),
+     std::make_unique<juce::AudioParameterFloat>("ratio1","Mod Ratio",0.05f,60.0f,1.0f),
+    
+    //Operator Envelope parameters
 
     std::make_unique<juce::AudioParameterFloat>("attack1","Attack",0.0f,1.0f,0.5f),
     std::make_unique<juce::AudioParameterFloat>("decay1","Decay",0.0f,1.0f,0.5f),
     std::make_unique<juce::AudioParameterFloat>("sustain1","Sustain",0.0f,1.0f,1.0f),
     std::make_unique<juce::AudioParameterFloat>("release1","Release",0.0f,3.0f,0.5f),
+
+    //Operator Wavetype selection parameters 
     std::make_unique<juce::AudioParameterChoice>("waveType","Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
 
         })
 {
 /// CONSTRUCTOR ///
 
-    waveTypeParam = parameters.getRawParameterValue("waveType");
+    //Operator DSP Parameters
+    amount1Param = parameters.getRawParameterValue("amount1");
+    ratio1Param = parameters.getRawParameterValue("ratio1");
+
+    //Operator Envelope parameters
     attack1Param = parameters.getRawParameterValue("attack1");
     decay1Param = parameters.getRawParameterValue("decay1");
     sustain1Param = parameters.getRawParameterValue("sustain1");
     release1Param = parameters.getRawParameterValue("release1");
+
+    //Operator Wavetype selection parameters
+    waveTypeParam = parameters.getRawParameterValue("waveType");
 
 
     //Add a voice to the synth depending on voiceCount
@@ -60,6 +74,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
         FMSynthVoice* v = dynamic_cast<FMSynthVoice*>(synth.getVoice(i));
         v->setEnvelopeParameterPointers(attack1Param, decay1Param, sustain1Param, release1Param);
         v-> setWaveTypeFromParameterPointer(waveTypeParam);
+        v->setOperatorDSPFromParameterPointer(amount1Param,ratio1Param);
     }
 
 

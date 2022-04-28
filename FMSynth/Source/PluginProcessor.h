@@ -59,6 +59,11 @@ private:
     /// Parameters 
     juce::AudioProcessorValueTreeState parameters; 
 
+    //Operator DSP Parameters
+
+    std::atomic<float>* amount1Param;
+    std::atomic<float>* ratio1Param;
+
     //Waveform selection parameters
 
     //juce::AudioParameterChoice waveTypeParam;
