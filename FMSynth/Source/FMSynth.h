@@ -105,7 +105,7 @@ public:
         amount1 = amountIn;
         ratio1 = ratioIn;
 
-        amount2 = amount2In;
+        amount2 = amount2In; 
         ratio2 = ratio2In;
     
 
@@ -129,6 +129,7 @@ public:
         float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber) + *ratio1;
 
         operator1.setFrequency(frequency);
+        
 
         //Envelope 
 
@@ -150,7 +151,9 @@ public:
 
     void setFrequencyFromParameterPointer(std::atomic<float>* frequencyIn)
     {
-        lfo1.setFrequency(frequencyIn);
+        lfoFreq = frequencyIn;
+
+        
     }
 
     //--------------------------------------------------------------------------
@@ -170,13 +173,20 @@ public:
     }
     
 
-    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn, std::atomic<float>* lfowaveTypeIn)
+    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn, std::atomic<float>* waveTypeIn2, std::atomic<float>* lfowaveTypeIn)
     {
        
         waveType = waveTypeIn;
+        waveType2 = waveTypeIn2;
         lfowaveType = lfowaveTypeIn;
 
         
+    }
+
+    void setRouteFromParameterPointer(std::atomic<float>* _lfoRoute)
+    {
+        lfoRouteInt = static_cast<int>(*_lfoRoute);
+
     }
   
 
@@ -198,30 +208,34 @@ public:
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
 
-                
+                //LFO
 
-                //Operators
+                lfo1.setFrequency(lfoFreq);
+                lfo1.setWaveTypeFromParameterPointer(lfowaveType);
+                lfo1.setRouteFromParameterPointer(lfoRouteInt);
+                lfo1.process();
+
+                //Operator 1
 
                 operator1.setWaveTypeFromParameterPointer(waveType);
                 
-                float operator1Process = operator1.process() * *amount1;
+                float operator1Process = (((operator1.process() * 0.5f) + 0.5f) * ((*amount1 - 50) + 50)); // Set the operator 1 output to be within the range 50 - 1000
+                
+                //Operator 2
 
-             /*   operator2.setFrequency((operator1Process * (*amount2 - 50) + 50));
                 operator2.setWaveTypeFromParameterPointer(waveType2);
+                operator2.setFrequency(operator1Process);
+               
+                 float operator2Process = operator2.process();
 
-                float operator2Process = operator2.process();*/
-
-                //LFO
-
-                lfo1.setWaveTypeFromParameterPointer(lfowaveType);
-                lfo1.process();
+                
 
                 //Envelope
 
                 float envValue = env1.getNextSample();
            
 
-                float currentSample = operator1Process; //+ operator2Process)/2) * envValue; 
+                float currentSample = (operator2Process * 0.1) * envValue; 
                 
                 // for each channel, write the currentSample float to the output
                 for (int chan = 0; chan<outputBuffer.getNumChannels(); chan++)
@@ -292,10 +306,17 @@ private:
 
     juce::ADSR env1;
 
+    //LFO DSP parammeters 
+
+    std::atomic<float>* lfoFreq;
+
     //LFO Wavetype selection parameters 
 
     std::atomic<float>* lfowaveType;
 
+    //LFO Wavetype selection parameters 
+
+    int lfoRouteInt;
 
     // Operators
 

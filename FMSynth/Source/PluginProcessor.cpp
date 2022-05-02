@@ -26,16 +26,16 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 
     //Operator 1 DSP Parameters
 
-     std::make_unique<juce::AudioParameterFloat>("amount1","Op 1 Mod Amount",0.0f,1.0f,0.5f),
-     std::make_unique<juce::AudioParameterFloat>("ratio1","OP 1 Mod Ratio",0.05f,60.0f,1.0f),
+     std::make_unique<juce::AudioParameterFloat>("amount1","Op 1 Mod Amount",50.0f,1000.0f,100.0f),
+     std::make_unique<juce::AudioParameterFloat>("ratio1","OP 1 Mod Ratio",0.0f,1000.0f,5.0f),
 
     //Operator 1 Wavetype selection parameters 
     std::make_unique<juce::AudioParameterChoice>("waveType1","Op 1 Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
 
     //Operator 2 DSP Parameters
 
-     std::make_unique<juce::AudioParameterFloat>("amount2","Op 2 Mod Amount",100.0f,16000.0f,200.0f),
-     std::make_unique<juce::AudioParameterFloat>("ratio2","OP 2 Mod Ratio",0.05f,60.0f,1.0f),
+     std::make_unique<juce::AudioParameterFloat>("amount2","Op 2 Mod Amount",50.0f,1000.0f,100.0f),
+     std::make_unique<juce::AudioParameterFloat>("ratio2","OP 2 Mod Ratio",0.0f,1000.0f,5.0f),
 
      //Operator 2 Wavetype selection parameters 
      std::make_unique<juce::AudioParameterChoice>("waveType2","Op 2 Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
@@ -44,8 +44,11 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 
     std::make_unique<juce::AudioParameterFloat>("lfoFreq1","LFO Ratio",0.05f,16.0f,1.0f),
 
-    //LFO Wavetype sleection parameters
+    //LFO Wavetype selection parameter
     std::make_unique<juce::AudioParameterChoice>("lfowaveType1","LFO Shape",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
+
+    //LFO Routing selection parameter
+   std::make_unique<juce::AudioParameterChoice>("lfoRoute","LFO Route",juce::StringArray{"Op 1 Amount","Op 1 Ratio","Op 2 Amount","Op 2 Ratio"},0),
 
     //Operator Envelope parameters
 
@@ -76,8 +79,12 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 
     lfo1Freq = parameters.getRawParameterValue("lfoFreq1");
 
-    //LFO Wavetype sleection parameters
+    //LFO Wavetype selection parameters
     lfowaveTypeParam = parameters.getRawParameterValue("lfowaveType1");
+
+    //LFO Routing selection parameter
+
+    lfoRouteParam = parameters.getRawParameterValue("lfoRoute");
 
     //Envelope parameters
     attack1Param = parameters.getRawParameterValue("attack1");
@@ -102,7 +109,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     {
         FMSynthVoice* v = dynamic_cast<FMSynthVoice*>(synth.getVoice(i));
         v->setEnvelopeParameterPointers(attack1Param, decay1Param, sustain1Param, release1Param);
-        v-> setWaveTypeFromParameterPointer(waveTypeParam, lfowaveTypeParam);
+        v-> setWaveTypeFromParameterPointer(waveTypeParam, waveType2Param, lfowaveTypeParam);
         v->setOperatorDSPFromParameterPointer(amount1Param,ratio1Param,amount2Param,ratio2Param);
         v->setFrequencyFromParameterPointer(lfo1Freq);
     }

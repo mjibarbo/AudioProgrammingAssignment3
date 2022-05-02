@@ -85,6 +85,10 @@ private:
 
     std::atomic<float>* lfowaveTypeParam;
 
+    //LFO Route selection parameter
+
+    std::atomic<float>* lfoRouteParam;
+
     // Envelope Parameters
     std::atomic<float>* attack1Param;
     std::atomic<float>* decay1Param;

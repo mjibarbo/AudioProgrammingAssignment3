@@ -16,6 +16,8 @@ class LFO
 {
     enum class WaveType { Sine, Triangle, Square, Saw };
 
+    enum class Route {Op1Amount,Op1Ratio,Op2Amount,Op2Ratio};
+
 public:
 
     void setSampleRate(float _sampleRate)
@@ -32,35 +34,35 @@ public:
   
     void setWaveType(WaveType newWaveType)
     {
-        switch (static_cast<WaveType>(waveTypeParamInt))
+        switch (newWaveType)
         {
         case WaveType::Sine:
 
-            output = osc.sineProcess();
+            waveOutput = osc.sineProcess();
 
             break;
 
         case WaveType::Triangle:
 
-            output = osc.triangleProcess();
+            waveOutput = osc.triangleProcess();
 
             break;
 
         case WaveType::Square:
 
-            output = osc.squareProcess();
+            waveOutput = osc.squareProcess();
 
             break;
 
         case WaveType::Saw:
 
-            output = osc.sawProcess();
+            waveOutput = osc.sawProcess();
 
             break;
 
         default:
 
-            output = osc.sineProcess();
+            waveOutput = osc.sineProcess();
 
 
         }
@@ -73,23 +75,66 @@ public:
         setWaveType(wavetype);
     }
 
+    void setRoute(Route newRoute)
+    {
+        switch (newRoute)
+        {
+        case Route::Op1Amount:
+
+            lfoOutput = (((waveOutput * 0.5f) + 0.5f) * (1000 - 50) + 50);
+
+            break;
+
+        case Route::Op1Ratio:
+
+            lfoOutput = (((waveOutput * 0.5f) + 0.5f) * (1000 - 0) + 0);
+
+            break;
+
+        case Route::Op2Amount:
+
+            lfoOutput = (((waveOutput * 0.5f) + 0.5f) * (1000 - 50) + 50);
+
+            break;
+
+        case Route::Op2Ratio:
+
+            lfoOutput = (((waveOutput * 0.5f) + 0.5f) * (1000 - 0) + 0);
+
+            break;
+
+
+        }
+
+    }
+
+    void setRouteFromParameterPointer(int routeIn)
+    {
+        
+        route = static_cast<Route>(routeIn);
+        setRoute(route);
+    }
 
     float process()
     {
-        return output;
+        return lfoOutput;
     }
 
 private:
 
     Oscillator osc;
 
-    float frequency;
+    float waveOutput;
 
-    float output;
+    float lfoOutput;
 
     int waveTypeParamInt;
 
+    int routeParamInt;
+
     LFO::WaveType wavetype;
+
+    LFO::Route route;
 
 
 };

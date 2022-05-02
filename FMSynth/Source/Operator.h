@@ -101,14 +101,6 @@ private:
 
     float frequency;
 
-    //Envelope Parameters
-
-    std::atomic<float>* attack1;
-    std::atomic<float>* decay1;
-    std::atomic<float>* sustain1;
-    std::atomic<float>* release1;
-    
-
     //Wavetype selection parameters 
 
     int waveTypeParamInt;
