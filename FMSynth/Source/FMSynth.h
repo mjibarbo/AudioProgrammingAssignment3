@@ -219,8 +219,15 @@ public:
 
                 operator1.setWaveTypeFromParameterPointer(waveType);
                 
-                float operator1Process = (((operator1.process() * 0.5f) + 0.5f) * ((*amount1 - 50) + 50)); // Set the operator 1 output to be within the range 50 - 1000
-                
+                if (lfoRouteInt == 0)
+                {
+                    operator1Process = (((operator1.process() * 0.5f) + 0.5f) * lfo1.process()); // Set the operator 1 output to be within the range 50 - 1000
+                }
+                else
+                {
+                    operator1Process = (((operator1.process() * 0.5f) + 0.5f) * ((*amount1 - 50) + 50)); // Set the operator 1 output to be within the range 50 - 1000
+                }
+
                 //Operator 2
 
                 operator2.setWaveTypeFromParameterPointer(waveType2);
@@ -292,6 +299,8 @@ private:
 
     std::atomic<float>* amount2;
     std::atomic<float>* ratio2;
+
+    float operator1Process;
 
     //Operator Wavetype selection parameters 
 

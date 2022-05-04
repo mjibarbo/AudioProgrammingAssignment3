@@ -112,6 +112,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
         v-> setWaveTypeFromParameterPointer(waveTypeParam, waveType2Param, lfowaveTypeParam);
         v->setOperatorDSPFromParameterPointer(amount1Param,ratio1Param,amount2Param,ratio2Param);
         v->setFrequencyFromParameterPointer(lfo1Freq);
+        v->setRouteFromParameterPointer(lfoRouteParam);
     }
 
 
