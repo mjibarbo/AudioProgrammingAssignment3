@@ -68,11 +68,6 @@ private:
 
     std::atomic<float>* waveTypeParam;
 
-    //Operator 2 DSP Parameters
-
-    std::atomic<float>* amount2Param;
-    std::atomic<float>* ratio2Param;
-
     //Operator 2 Waveform selection parameters
 
     std::atomic<float>* waveType2Param;
@@ -85,9 +80,6 @@ private:
 
     std::atomic<float>* lfowaveTypeParam;
 
-    //LFO Route selection parameter
-
-    std::atomic<float>* lfoRouteParam;
 
     // Envelope Parameters
     std::atomic<float>* attack1Param;
