@@ -347,6 +347,8 @@ private:
     std::atomic<float>* sustain1;
     std::atomic<float>* release1;
 
+    
+
     //Smoothed Values
 
     juce::SmoothedValue<float> smoothAmount, smoothRatio, smoothLFOFreq, smoothGain;

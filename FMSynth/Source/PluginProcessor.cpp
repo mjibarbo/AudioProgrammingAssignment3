@@ -34,7 +34,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 
     //LFOs parameters 
 
-    std::make_unique<juce::AudioParameterFloat>("lfoFreq1","LFO Ratio",0.05f,16.0f,1.0f),
+    std::make_unique<juce::AudioParameterFloat>("lfoFreq1","LFO Ratio",0.05f,20.0f,1.0f),
 
     //LFO wavetype selection parameter
      std::make_unique<juce::AudioParameterChoice>("lfowaveType1","LFO Shape",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),

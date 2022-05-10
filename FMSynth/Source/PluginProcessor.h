@@ -87,6 +87,7 @@ private:
 
     juce::Synthesiser synth; //Instance of a synth
 
+
     int voiceCount = 16; //Number of voices in the polyphony 
 
     //==============================================================================
