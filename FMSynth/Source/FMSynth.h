@@ -41,7 +41,6 @@ public:
  */
 class FMSynthVoice : public juce::SynthesiserVoice
 {
-    enum class WaveType {Sine, Triangle, Square, Saw};
 
 public:
 
@@ -50,66 +49,74 @@ public:
 
     //-------------------------------------------------------------------------
     /**
-     Set the envelope parameter pointers after
+     Set the envelope parameters from pointers
 
-     @param attack
-     @param decay
-     @param sustain
-     @param release
+     @param attackPointer
+     @param decayPointer
+     @param sustainPointer
+     @param releasePointer
 
      */
 
     void setEnvelopeParameterPointers(
 
-        std::atomic<float>* attack1In,
-        std::atomic<float>* decay1In,
-        std::atomic<float>* sustain1In,
-        std::atomic<float>* release1In
+        std::atomic<float>* attackPointer,
+        std::atomic<float>* decayPointer,
+        std::atomic<float>* sustainPointer,
+        std::atomic<float>* releasePointer
    
 
     )
     {
-        attack1 = attack1In;
-        decay1 = decay1In;
-        sustain1 = sustain1In;
-        release1 = release1In;
+        attack1 = attackPointer;
+        decay1 = decayPointer;
+        sustain1 = sustainPointer;
+        release1 = releasePointer;
 
     }
 
+    //--------------------------------------------------------------------------
     /**
     Function to initialise sample rate
 
      @param sampleRate
 
     */
-
-
     void setSampleRate(float sampleRate)
     {
         modulator.setSampleRate(sampleRate);
         carrier.setSampleRate(sampleRate);
         lfo1.setSampleRate(sampleRate);
         env1.setSampleRate(sampleRate);
+
+        //Smooth values initialization (all values are being set to have a ramp lenght of 0.5 seconds)
+
         smoothAmount.reset(sampleRate, 0.5);
         smoothRatio.reset(sampleRate, 0.5);
         smoothLFOFreq.reset(sampleRate, 0.5);
+
         smoothAmount.setCurrentAndTargetValue(0.0f);
         smoothAmount.setCurrentAndTargetValue(0.0f);
         smoothAmount.setCurrentAndTargetValue(0.0f);
 
     }
 
-    void setOperatorDSPFromParameterPointer(
-        std::atomic<float>* amountIn, 
-        std::atomic<float>* ratioIn
+    //--------------------------------------------------------------------------
+    /**
+    Set the modulator amount and ratio from the parameter pointers
+    @param amountPointer
+    @param ratioPointer
+
+    */
+    void setModulatorParametersFromPointers(
+        std::atomic<float>* amountPointer,
+        std::atomic<float>* ratioPointer
     )
     {
-        amount1 = amountIn;
-        ratio1 = ratioIn;
+        amount1 = amountPointer;
+        ratio1 = ratioPointer;
 
     }
-
-  
 
     //--------------------------------------------------------------------------
     /**
@@ -126,10 +133,12 @@ public:
         ending = false; 
         frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
 
-        //Envelope 
+        //Envelope initialization
 
         env1.reset();
         env1.noteOn();
+
+        //Envelope Parameters
 
         juce::ADSR::Parameters env1Params;
 
@@ -142,11 +151,16 @@ public:
 
     }
 
-    void setLFOFrequencyFromParameterPointer(std::atomic<float>* frequencyIn)
-    {
-        lfoFreq = frequencyIn;
+    //--------------------------------------------------------------------------
+    /**
+    Set LFO Frequency from Parameter Pointer
 
-        
+    @param frequencyPointer
+    */
+    void setLFOFrequencyFromParameterPointer(std::atomic<float>* frequencyPointer)
+    {
+        lfoFreq = frequencyPointer;
+    
     }
 
     //--------------------------------------------------------------------------
@@ -165,13 +179,17 @@ public:
         
     }
     
+    /**
+    Set wavetype for the modulator and LFO from parameter pointers
 
-    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn, std::atomic<float>* lfowaveTypeIn)
+    @param wavetypePointer
+    @param lfoWavetypePointer
+    */
+    void setWaveTypeFromParameterPointer(std::atomic<float>* wavetypePointer, std::atomic<float>* lfoWavetypePointer)
     {
        
-        waveType = waveTypeIn;
-        lfowaveType = lfowaveTypeIn;
-
+        waveType = wavetypePointer;
+        lfowaveType = lfoWavetypePointer;
         
     }
 
@@ -191,6 +209,7 @@ public:
     {
         if (playing) // check to see if this voice should be playing
         {
+            //Smoothed Values Target Setting
             smoothAmount.setTargetValue(*amount1);
             smoothRatio.setTargetValue(*ratio1);
             smoothLFOFreq.setTargetValue(*lfoFreq);
@@ -199,6 +218,8 @@ public:
             // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
+                //Smoothed Values Process
+
                 float amountVal = smoothAmount.getNextValue();
                 float ratioVal = smoothRatio.getNextValue();
                 float lfoFreqVal = smoothLFOFreq.getNextValue();
@@ -211,22 +232,22 @@ public:
 
                 //Modulator Process
 
-                modulator.setFrequency(frequency + ratioVal);
+                modulator.setFrequency(frequency + ratioVal); //Setting the frequency of the modulator to be the incoming MIDI + the value set in the ratio parameter
                 modulator.setWaveTypeFromParameterPointer(waveType);
-                float modulatorProcess = ((modulator.process() * 0.5f) + 0.5f)* (((lfo1.process() * 0.5f) + 0.5f) * (amountVal - 50) + 50); // Set the operator 1 output to be within the range 50 - 1000
+                float modulatorProcess = ((modulator.process() * 0.5f) + 0.5f)* (((lfo1.process() * 0.5f) + 0.5f) * (amountVal - 50) + 50); // Set the modulator output to be within the range 50 to the value set in the amount parameter
               
                 //Carrier Process
 
                 carrier.setFrequency(modulatorProcess);
                
-                 float operator2Process = carrier.sineProcess() * 0.5;
+                float carrierProcess = carrier.sineProcess() * 0.05f; //Reducing the final output gain to prevent clipping
 
-                //Envelope
+                //Envelope Process
 
                 float envValue = env1.getNextSample();
            
 
-                float currentSample = (operator2Process * 0.1) * envValue; 
+                float currentSample = carrierProcess * envValue; //Applying the envelope to the carrier output
                 
                 // for each channel, write the currentSample float to the output
                 for (int chan = 0; chan<outputBuffer.getNumChannels(); chan++)
@@ -274,7 +295,7 @@ private:
 
     Modulator modulator;
 
-    //Modulator DSP Parameters
+    //Modulator Parameters
 
     float frequency;
     std::atomic<float>* amount1;

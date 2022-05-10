@@ -18,12 +18,26 @@ class Modulator
 
 public: 
 
+    //-------------------------------------------------------------------------
+    /**
+    Set modulator sample rate
+
+    @param _sampleRate
+
+    */
     void setSampleRate(float _sampleRate)
     {
         osc.setSampleRate(_sampleRate);
         
     }
 
+    //-------------------------------------------------------------------------
+    /**
+    Set modulator frequency
+
+    @param _frequency
+
+    */
     void setFrequency(float _frequency)
     {
         osc.setFrequency(_frequency);
@@ -31,14 +45,13 @@ public:
 
    
 
-    //-------------------------------------------------------------------------
- /**
-  Select wave type
+   //-------------------------------------------------------------------------
+   /**
+   Select modulator wavetype
 
-  @param newWaveType
+   @param newWaveType
 
-  */
-
+   */
    void setWaveType(WaveType newWaveType)
    {
 
@@ -77,12 +90,18 @@ public:
    }
 
       
+   //-------------------------------------------------------------------------
+   /**
+   Set the modulator wavetype from the parameter pointer
 
-   void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
+   @param wavetypePointer
+
+   */
+   void setWaveTypeFromParameterPointer(std::atomic<float>* wavetypePointer)
    {
-       waveTypeParamInt = static_cast<int>(*waveTypeIn);
-       wavetype = static_cast<WaveType>(waveTypeParamInt);
-       setWaveType(wavetype);
+       waveTypeParamInt = static_cast<int>(*wavetypePointer); //Casting the wavetype to an integer
+       wavetype = static_cast<WaveType>(waveTypeParamInt); //Casting the wavetype to a WaveType enum 
+       setWaveType(wavetype); //Setting the wavetype 
    }
 
 
@@ -96,7 +115,7 @@ public:
 private:
 
     
-    Oscillator osc;
+    Oscillator osc; //Instance of an oscillator
 
 
     //Wavetype selection parameters 
@@ -106,6 +125,6 @@ private:
     Modulator::WaveType wavetype;
 
 
-    float output;
+    float output; //Variable for the modulator output
 
 };

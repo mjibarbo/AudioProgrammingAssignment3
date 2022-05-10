@@ -24,23 +24,23 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 
     parameters(*this, nullptr, "ParamTreeID", {
 
-    //Operator 1 DSP Parameters
+    //Modulator parameters
 
      std::make_unique<juce::AudioParameterFloat>("amount","Mod Amount",100.0f,1000.0f,200.0f),
      std::make_unique<juce::AudioParameterFloat>("ratio","Mod Ratio",0.0f,1000.0f,5.0f),
 
-    //Operator 1 Wavetype selection parameters 
+    //Modulator wavetype selection parameters 
     std::make_unique<juce::AudioParameterChoice>("waveType1","Mod Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
 
-    //LFOs DSP Parameters 
+    //LFOs parameters 
 
     std::make_unique<juce::AudioParameterFloat>("lfoFreq1","LFO Ratio",0.05f,16.0f,1.0f),
 
-    //LFOs Wavetype selection parameter
+    //LFO wavetype selection parameter
      std::make_unique<juce::AudioParameterChoice>("lfowaveType1","LFO Shape",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
 
 
-    //Operator Envelope parameters
+    //Envelope parameters
 
     std::make_unique<juce::AudioParameterFloat>("attack1","Attack",0.0f,1.0f,0.5f),
     std::make_unique<juce::AudioParameterFloat>("decay1","Decay",0.0f,1.0f,0.5f),
@@ -51,19 +51,19 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 {
 /// CONSTRUCTOR ///
 
-    //Operator DSP Parameters
+    //Modulator parameters
     amount1Param = parameters.getRawParameterValue("amount");
     ratio1Param = parameters.getRawParameterValue("ratio");
 
-    //Operator Wavetype selection parameters
+    //Modulator wavetype selection parameter
     waveTypeParam = parameters.getRawParameterValue("waveType1");
 
 
-    //LFO DSP Parameters 
+    //LFO parameters 
 
     lfo1Freq = parameters.getRawParameterValue("lfoFreq1");
 
-    //LFO Wavetype selection parameters
+    //LFO wavetype selection parameter
     lfowaveTypeParam = parameters.getRawParameterValue("lfowaveType1");
 
     //Envelope parameters
@@ -81,16 +81,14 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
 
     synth.addSound(new FMSynthSound);
 
-    
-
-    
+    //For loop to set the parameters for each voice
 
     for (int i = 0; i < voiceCount; i++)
     {
         FMSynthVoice* v = dynamic_cast<FMSynthVoice*>(synth.getVoice(i));
         v->setEnvelopeParameterPointers(attack1Param, decay1Param, sustain1Param, release1Param);
         v-> setWaveTypeFromParameterPointer(waveTypeParam, lfowaveTypeParam);
-        v->setOperatorDSPFromParameterPointer(amount1Param,ratio1Param);
+        v->setModulatorParametersFromPointers(amount1Param,ratio1Param);
         v->setLFOFrequencyFromParameterPointer(lfo1Freq);
     }
 

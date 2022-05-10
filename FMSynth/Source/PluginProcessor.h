@@ -56,7 +56,7 @@ public:
 
 private:
 
-    /// Parameters 
+    // Parameters 
     juce::AudioProcessorValueTreeState parameters; 
 
     //Operator 1 DSP Parameters
@@ -67,10 +67,6 @@ private:
     //Operator 1 Waveform selection parameters
 
     std::atomic<float>* waveTypeParam;
-
-    //Operator 2 Waveform selection parameters
-
-    std::atomic<float>* waveType2Param;
 
     //LFO DSP Parameters
 
@@ -87,7 +83,7 @@ private:
     std::atomic<float>* sustain1Param;
     std::atomic<float>* release1Param;
 
-    juce::Synthesiser synth;
+    juce::Synthesiser synth; //Instance of a synth
 
     int voiceCount = 16; //Number of voices in the polyphony 
 

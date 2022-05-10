@@ -18,18 +18,38 @@ class LFO
 
 public:
 
+    //-------------------------------------------------------------------------
+    /**
+    Set LFO sample rate
+
+    @param _sampleRate
+
+    */
     void setSampleRate(float _sampleRate)
     {
         osc.setSampleRate(_sampleRate);
     }
 
-    void setFrequency(float frequencyIn)
+    //-------------------------------------------------------------------------
+    /**
+    Set LFO frequency
+
+    @param _frequency
+
+    */
+    void setFrequency(float _frequency)
     {
 
-        osc.setFrequency(frequencyIn);
+        osc.setFrequency(_frequency);
     }
 
-  
+    //-------------------------------------------------------------------------
+    /**
+    Select LFO wavetype
+
+    @param newWaveType
+
+    */
     void setWaveType(WaveType newWaveType)
     {
         switch (newWaveType)
@@ -66,11 +86,18 @@ public:
         }
     }
 
+    //-------------------------------------------------------------------------
+    /**
+    Set the modulator wavetype from the parameter pointer
+
+    @param wavetypePointer
+
+    */
     void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
     {
-        waveTypeParamInt = static_cast<int>(*waveTypeIn);
-        wavetype = static_cast<WaveType>(waveTypeParamInt);
-        setWaveType(wavetype);
+        waveTypeParamInt = static_cast<int>(*waveTypeIn); //Casting the wavetype to an integer
+        wavetype = static_cast<WaveType>(waveTypeParamInt); //Casting the wavetype to a WaveType enum 
+        setWaveType(wavetype); //Setting the wavetype 
     }
 
 
@@ -81,13 +108,14 @@ public:
 
 private:
 
-    Oscillator osc;
+    Oscillator osc; //Instance of an oscillator 
 
-    float waveOutput;
-
+    //Wavetype selection parameters 
     int waveTypeParamInt;
 
     LFO::WaveType wavetype;
+
+    float waveOutput; //Variable for the LFO output 
 
 
 
