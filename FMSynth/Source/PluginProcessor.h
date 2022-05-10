@@ -59,6 +59,8 @@ private:
     // Parameters 
     juce::AudioProcessorValueTreeState parameters; 
 
+    std::atomic<float>* gainParam;
+
     //Operator 1 DSP Parameters
 
     std::atomic<float>* amount1Param;

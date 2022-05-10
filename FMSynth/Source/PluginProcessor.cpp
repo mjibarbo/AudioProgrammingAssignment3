@@ -47,9 +47,15 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     std::make_unique<juce::AudioParameterFloat>("sustain1","Sustain",0.0f,1.0f,1.0f),
     std::make_unique<juce::AudioParameterFloat>("release1","Release",0.0f,3.0f,0.5f),
 
+    //Gain Parameter
+
+    std::make_unique<juce::AudioParameterFloat>("gain","Gain",0.01f,1.0f,0.5f),
+
         })
 {
 /// CONSTRUCTOR ///
+
+    gainParam = parameters.getRawParameterValue("gain");
 
     //Modulator parameters
     amount1Param = parameters.getRawParameterValue("amount");
@@ -90,6 +96,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
         v-> setWaveTypeFromParameterPointer(waveTypeParam, lfowaveTypeParam);
         v->setModulatorParametersFromPointers(amount1Param,ratio1Param);
         v->setLFOFrequencyFromParameterPointer(lfo1Freq);
+        v->setGainFromParameterPointer(gainParam);
     }
 
 

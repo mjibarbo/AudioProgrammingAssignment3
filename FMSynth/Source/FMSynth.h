@@ -94,11 +94,12 @@ public:
         smoothAmount.reset(sampleRate, 0.5);
         smoothRatio.reset(sampleRate, 0.5);
         smoothLFOFreq.reset(sampleRate, 0.5);
+        smoothGain.reset(sampleRate, 0.5);
 
         smoothAmount.setCurrentAndTargetValue(0.0f);
         smoothAmount.setCurrentAndTargetValue(0.0f);
         smoothAmount.setCurrentAndTargetValue(0.0f);
-
+        smoothGain.setCurrentAndTargetValue(0.0f);
     }
 
     //--------------------------------------------------------------------------
@@ -185,14 +186,26 @@ public:
     @param wavetypePointer
     @param lfoWavetypePointer
     */
-    void setWaveTypeFromParameterPointer(std::atomic<float>* wavetypePointer, std::atomic<float>* lfoWavetypePointer)
+     void setWaveTypeFromParameterPointer(std::atomic<float>* wavetypePointer, std::atomic<float>* lfoWavetypePointer)
     {
        
-        waveType = wavetypePointer;
+       waveType = wavetypePointer;
         lfowaveType = lfoWavetypePointer;
         
     }
 
+     /**
+     Set gain from parameter pointer
+
+     @param wavetypePointer
+     @param lfoWavetypePointer
+     */
+     void setGainFromParameterPointer(std::atomic<float>* gainPointer)
+     {
+
+         gain = gainPointer;
+
+     }
   
 
     //--------------------------------------------------------------------------
@@ -213,6 +226,7 @@ public:
             smoothAmount.setTargetValue(*amount1);
             smoothRatio.setTargetValue(*ratio1);
             smoothLFOFreq.setTargetValue(*lfoFreq);
+            smoothGain.setTargetValue(*gain);
 
 
             // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
@@ -223,6 +237,7 @@ public:
                 float amountVal = smoothAmount.getNextValue();
                 float ratioVal = smoothRatio.getNextValue();
                 float lfoFreqVal = smoothLFOFreq.getNextValue();
+                float gainVal = smoothGain.getNextValue();
 
                 //LFO Process
 
@@ -240,14 +255,14 @@ public:
 
                 carrier.setFrequency(modulatorProcess);
                
-                float carrierProcess = carrier.sineProcess() * 0.05f; //Reducing the final output gain to prevent clipping
+                float carrierProcess = carrier.sineProcess() * 0.5f; //Reducing the final output gain to prevent clipping
 
                 //Envelope Process
 
                 float envValue = env1.getNextSample();
            
 
-                float currentSample = carrierProcess * envValue; //Applying the envelope to the carrier output
+                float currentSample = (carrierProcess * gainVal) * envValue; //Applying the envelope to the carrier output
                 
                 // for each channel, write the currentSample float to the output
                 for (int chan = 0; chan<outputBuffer.getNumChannels(); chan++)
@@ -295,6 +310,8 @@ private:
 
     Modulator modulator;
 
+    std::atomic<float>* gain;
+
     //Modulator Parameters
 
     float frequency;
@@ -332,6 +349,6 @@ private:
 
     //Smoothed Values
 
-    juce::SmoothedValue<float> smoothAmount, smoothRatio, smoothLFOFreq;
+    juce::SmoothedValue<float> smoothAmount, smoothRatio, smoothLFOFreq, smoothGain;
    
 };
