@@ -97,16 +97,11 @@ public:
 
     void setOperatorDSPFromParameterPointer(
         std::atomic<float>* amountIn, 
-        std::atomic<float>* ratioIn, 
-        std::atomic<float>* amount2In, 
-        std::atomic<float>* ratio2In
+        std::atomic<float>* ratioIn
     )
     {
         amount1 = amountIn;
         ratio1 = ratioIn;
-
-        amount2 = amount2In; 
-        ratio2 = ratio2In;
     
 
     }
@@ -126,9 +121,9 @@ public:
     {
         playing = true;
         ending = false; 
-        float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber) + *ratio1;
+        frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
+        
 
-        operator1.setFrequency(frequency);
         
 
         //Envelope 
@@ -149,7 +144,7 @@ public:
        
     }
 
-    void setFrequencyFromParameterPointer(std::atomic<float>* frequencyIn)
+    void setLFOFrequencyFromParameterPointer(std::atomic<float>* frequencyIn)
     {
         lfoFreq = frequencyIn;
 
@@ -183,11 +178,6 @@ public:
         
     }
 
-    void setRouteFromParameterPointer(std::atomic<float>* _lfoRoute)
-    {
-        lfoRouteInt = static_cast<int>(*_lfoRoute);
-
-    }
   
 
     //--------------------------------------------------------------------------
@@ -212,21 +202,14 @@ public:
 
                 lfo1.setFrequency(lfoFreq);
                 lfo1.setWaveTypeFromParameterPointer(lfowaveType);
-                lfo1.setRouteFromParameterPointer(lfoRouteInt);
                 lfo1.process();
 
                 //Operator 1
-
+                operator1.setFrequency(frequency + *ratio1);
                 operator1.setWaveTypeFromParameterPointer(waveType);
-                
-                if (lfoRouteInt == 0)
-                {
-                    operator1Process = (((operator1.process() * 0.5f) + 0.5f) * lfo1.process()); // Set the operator 1 output to be within the range 50 - 1000
-                }
-                else
-                {
-                    operator1Process = (((operator1.process() * 0.5f) + 0.5f) * ((*amount1 - 50) + 50)); // Set the operator 1 output to be within the range 50 - 1000
-                }
+                operator1Process = ((operator1.process() * 0.5f) + 0.5f)* (((lfo1.process() * 0.5f) + 0.5f) * (*amount1 - 50) + 50); // Set the operator 1 output to be within the range 50 - 1000
+              
+             
 
                 //Operator 2
 
@@ -234,8 +217,6 @@ public:
                 operator2.setFrequency(operator1Process);
                
                  float operator2Process = operator2.process();
-
-                
 
                 //Envelope
 
@@ -288,6 +269,7 @@ private:
 
     //Operator DSP Parameters
 
+    float frequency;
     std::atomic<float>* amount1;
     std::atomic<float>* ratio1;
 

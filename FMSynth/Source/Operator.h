@@ -15,6 +15,7 @@ class Operator
 
 {
     enum class WaveType { Sine, Triangle, Square, Saw };
+    enum class Route { Op1Amount, Op1Ratio, Op2Amount, Op2Ratio };
 
 public: 
 
@@ -27,8 +28,7 @@ public:
     void setFrequency(float _frequency)
     {
         osc.setFrequency(_frequency);
-    }
-    
+    }   
 
    
 
@@ -84,6 +84,12 @@ public:
        setWaveType(wavetype);
    }
 
+   void setRouteFromParameterPointer(int routeIn)
+   {
+
+       route = static_cast<Route>(routeIn);
+   }
+
 
    float process()
    {
@@ -100,12 +106,16 @@ private:
     //Oscillator Parameters
 
     float frequency;
+    std::atomic<float>* amount;
+    std::atomic<float>* ratio;
 
     //Wavetype selection parameters 
 
     int waveTypeParamInt;
 
     Operator::WaveType wavetype;
+
+    Operator::Route route;
 
     float output;
 
