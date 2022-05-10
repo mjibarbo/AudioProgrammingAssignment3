@@ -10,7 +10,7 @@
 
 #pragma once
 #include "Oscillator.h"
-#include "Operator.h"
+#include "Modulator.h"
 #include "LFO.h"
 
 // ===========================
@@ -86,8 +86,8 @@ public:
 
     void setSampleRate(float sampleRate)
     {
-        operator1.setSampleRate(sampleRate);
-        operator2.setSampleRate(sampleRate);
+        modulator.setSampleRate(sampleRate);
+        carrier.setSampleRate(sampleRate);
         lfo1.setSampleRate(sampleRate);
         env1.setSampleRate(sampleRate);
         smoothAmount.reset(sampleRate, 0.5);
@@ -106,7 +106,6 @@ public:
     {
         amount1 = amountIn;
         ratio1 = ratioIn;
-    
 
     }
 
@@ -126,9 +125,6 @@ public:
         playing = true;
         ending = false; 
         frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
-        
-
-        
 
         //Envelope 
 
@@ -144,8 +140,6 @@ public:
 
         env1.setParameters(env1Params);
 
-
-       
     }
 
     void setLFOFrequencyFromParameterPointer(std::atomic<float>* frequencyIn)
@@ -172,11 +166,10 @@ public:
     }
     
 
-    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn, std::atomic<float>* waveTypeIn2, std::atomic<float>* lfowaveTypeIn)
+    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn, std::atomic<float>* lfowaveTypeIn)
     {
        
         waveType = waveTypeIn;
-        waveType2 = waveTypeIn2;
         lfowaveType = lfowaveTypeIn;
 
         
@@ -210,25 +203,23 @@ public:
                 float ratioVal = smoothRatio.getNextValue();
                 float lfoFreqVal = smoothLFOFreq.getNextValue();
 
-                //LFO
+                //LFO Process
 
                 lfo1.setFrequency(lfoFreqVal);
                 lfo1.setWaveTypeFromParameterPointer(lfowaveType);
                 lfo1.process();
 
-                //Operator 1
-                operator1.setFrequency(frequency + ratioVal);
-                operator1.setWaveTypeFromParameterPointer(waveType);
-                operator1Process = ((operator1.process() * 0.5f) + 0.5f)* (((lfo1.process() * 0.5f) + 0.5f) * (amountVal - 50) + 50); // Set the operator 1 output to be within the range 50 - 1000
+                //Modulator Process
+
+                modulator.setFrequency(frequency + ratioVal);
+                modulator.setWaveTypeFromParameterPointer(waveType);
+                float modulatorProcess = ((modulator.process() * 0.5f) + 0.5f)* (((lfo1.process() * 0.5f) + 0.5f) * (amountVal - 50) + 50); // Set the operator 1 output to be within the range 50 - 1000
               
-             
+                //Carrier Process
 
-                //Operator 2
-
-                operator2.setWaveTypeFromParameterPointer(waveType2);
-                operator2.setFrequency(operator1Process);
+                carrier.setFrequency(modulatorProcess);
                
-                 float operator2Process = operator2.process() * 0.5;
+                 float operator2Process = carrier.sineProcess() * 0.5;
 
                 //Envelope
 
@@ -279,35 +270,27 @@ private:
     bool playing = false;
     bool ending = false; 
 
-    //Operator DSP Parameters
+    //Modulator 
+
+    Modulator modulator;
+
+    //Modulator DSP Parameters
 
     float frequency;
     std::atomic<float>* amount1;
     std::atomic<float>* ratio1;
 
-    //Operator Wavetype selection parameters 
+    //Modulator Wavetype selection parameters 
 
     std::atomic<float>* waveType;
 
-    //Operator 2 DSP Parameters
+    //Carrier 
 
-    std::atomic<float>* amount2;
-    std::atomic<float>* ratio2;
+    Oscillator carrier;
 
-    float operator1Process;
+    //LFO
 
-    //Operator Wavetype selection parameters 
-
-    std::atomic<float>* waveType2;
-
-    //Envelope parameters 
-
-    std::atomic<float>* attack1; 
-    std::atomic<float>* decay1;
-    std::atomic<float>* sustain1;
-    std::atomic<float>* release1;
-
-    juce::ADSR env1;
+    LFO lfo1;
 
     //LFO DSP parammeters 
 
@@ -317,17 +300,14 @@ private:
 
     std::atomic<float>* lfowaveType;
 
-    //LFO Wavetype selection parameters 
+    //Envelope parameters 
 
-    int lfoRouteInt;
+    juce::ADSR env1;
 
-    // Operators
-
-    Operator operator1, operator2;
-
-    //LFO
-
-    LFO lfo1;
+    std::atomic<float>* attack1; 
+    std::atomic<float>* decay1;
+    std::atomic<float>* sustain1;
+    std::atomic<float>* release1;
 
     //Smoothed Values
 

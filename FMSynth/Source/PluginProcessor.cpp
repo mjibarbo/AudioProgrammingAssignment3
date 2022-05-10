@@ -32,9 +32,6 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     //Operator 1 Wavetype selection parameters 
     std::make_unique<juce::AudioParameterChoice>("waveType1","Mod Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
 
-     //Operator 2 Wavetype selection parameters 
-     std::make_unique<juce::AudioParameterChoice>("waveType2","Carrier Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
-
     //LFOs DSP Parameters 
 
     std::make_unique<juce::AudioParameterFloat>("lfoFreq1","LFO Ratio",0.05f,16.0f,1.0f),
@@ -61,8 +58,6 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     //Operator Wavetype selection parameters
     waveTypeParam = parameters.getRawParameterValue("waveType1");
 
-    //Operator Wavetype selection parameters
-    waveType2Param = parameters.getRawParameterValue("waveType2");
 
     //LFO DSP Parameters 
 
@@ -94,7 +89,7 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
     {
         FMSynthVoice* v = dynamic_cast<FMSynthVoice*>(synth.getVoice(i));
         v->setEnvelopeParameterPointers(attack1Param, decay1Param, sustain1Param, release1Param);
-        v-> setWaveTypeFromParameterPointer(waveTypeParam, waveType2Param, lfowaveTypeParam);
+        v-> setWaveTypeFromParameterPointer(waveTypeParam, lfowaveTypeParam);
         v->setOperatorDSPFromParameterPointer(amount1Param,ratio1Param);
         v->setLFOFrequencyFromParameterPointer(lfo1Freq);
     }

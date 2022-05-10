@@ -11,7 +11,7 @@
 #pragma once
 #include "Oscillator.h"
 
-class Operator
+class Modulator
 
 {
     enum class WaveType { Sine, Triangle, Square, Saw };
@@ -76,6 +76,8 @@ public:
        }
    }
 
+      
+
    void setWaveTypeFromParameterPointer(std::atomic<float>* waveTypeIn)
    {
        waveTypeParamInt = static_cast<int>(*waveTypeIn);
@@ -96,17 +98,12 @@ private:
     
     Oscillator osc;
 
-    //Oscillator Parameters
-
-    float frequency;
-    std::atomic<float>* amount;
-    std::atomic<float>* ratio;
 
     //Wavetype selection parameters 
 
     int waveTypeParamInt;
 
-    Operator::WaveType wavetype;
+    Modulator::WaveType wavetype;
 
 
     float output;
