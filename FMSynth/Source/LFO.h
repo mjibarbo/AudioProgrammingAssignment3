@@ -23,10 +23,10 @@ public:
         osc.setSampleRate(_sampleRate);
     }
 
-    void setFrequency(std::atomic<float>* frequencyIn)
+    void setFrequency(float frequencyIn)
     {
 
-        osc.setFrequency(*frequencyIn);
+        osc.setFrequency(frequencyIn);
     }
 
   
@@ -73,45 +73,6 @@ public:
         setWaveType(wavetype);
     }
 
-    //void setRoute(Route newRoute)
-    //{
-    //    switch (newRoute)
-    //    {
-    //    case Route::Op1Amount:
-
-    //        lfoOutput = (((waveOutput * 0.5f) + 0.5f) * (1000 - 50) + 50);
-
-    //        break;
-        
-    //    case Route::Op1Ratio:
-
-    //        lfoOutput = (((waveOutput * 0.5f) + 0.5f) * (1000 - 0) + 0);
-
-    //        break;
-
-    //    case Route::Op2Amount:
-
-    //        lfoOutput = (((waveOutput * 0.5f) + 0.5f) * (1000 - 50) + 50);
-
-    //        break;
-
-    //    case Route::Op2Ratio:
-
-    //        lfoOutput = (((waveOutput * 0.5f) + 0.5f) * (1000 - 0) + 0);
-
-    //        break;
-
-
-    //    }
-
-    //}
-
-    //void setRouteFromParameterPointer(int routeIn)
-    //{
-    //    
-    //    route = static_cast<Route>(routeIn);
-    //    setRoute(route);
-    //}
 
     float process()
     {

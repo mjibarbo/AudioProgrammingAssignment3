@@ -88,10 +88,14 @@ public:
     {
         operator1.setSampleRate(sampleRate);
         operator2.setSampleRate(sampleRate);
-        operator3.setSampleRate(sampleRate);
-        operator4.setSampleRate(sampleRate);
         lfo1.setSampleRate(sampleRate);
         env1.setSampleRate(sampleRate);
+        smoothAmount.reset(sampleRate, 0.5);
+        smoothRatio.reset(sampleRate, 0.5);
+        smoothLFOFreq.reset(sampleRate, 0.5);
+        smoothAmount.setCurrentAndTargetValue(0.0f);
+        smoothAmount.setCurrentAndTargetValue(0.0f);
+        smoothAmount.setCurrentAndTargetValue(0.0f);
 
     }
 
@@ -194,20 +198,28 @@ public:
     {
         if (playing) // check to see if this voice should be playing
         {
+            smoothAmount.setTargetValue(*amount1);
+            smoothRatio.setTargetValue(*ratio1);
+            smoothLFOFreq.setTargetValue(*lfoFreq);
+
+
             // iterate through the necessary number of samples (from startSample up to startSample + numSamples)
             for (int sampleIndex = startSample;   sampleIndex < (startSample+numSamples);   sampleIndex++)
             {
+                float amountVal = smoothAmount.getNextValue();
+                float ratioVal = smoothRatio.getNextValue();
+                float lfoFreqVal = smoothLFOFreq.getNextValue();
 
                 //LFO
 
-                lfo1.setFrequency(lfoFreq);
+                lfo1.setFrequency(lfoFreqVal);
                 lfo1.setWaveTypeFromParameterPointer(lfowaveType);
                 lfo1.process();
 
                 //Operator 1
-                operator1.setFrequency(frequency + *ratio1);
+                operator1.setFrequency(frequency + ratioVal);
                 operator1.setWaveTypeFromParameterPointer(waveType);
-                operator1Process = ((operator1.process() * 0.5f) + 0.5f)* (((lfo1.process() * 0.5f) + 0.5f) * (*amount1 - 50) + 50); // Set the operator 1 output to be within the range 50 - 1000
+                operator1Process = ((operator1.process() * 0.5f) + 0.5f)* (((lfo1.process() * 0.5f) + 0.5f) * (amountVal - 50) + 50); // Set the operator 1 output to be within the range 50 - 1000
               
              
 
@@ -216,7 +228,7 @@ public:
                 operator2.setWaveTypeFromParameterPointer(waveType2);
                 operator2.setFrequency(operator1Process);
                
-                 float operator2Process = operator2.process();
+                 float operator2Process = operator2.process() * 0.5;
 
                 //Envelope
 
@@ -311,12 +323,14 @@ private:
 
     // Operators
 
-    Operator operator1, operator2, operator3, operator4;
+    Operator operator1, operator2;
 
     //LFO
 
     LFO lfo1;
 
+    //Smoothed Values
 
+    juce::SmoothedValue<float> smoothAmount, smoothRatio, smoothLFOFreq;
    
 };

@@ -30,17 +30,17 @@ FMSynthAudioProcessor::FMSynthAudioProcessor()
      std::make_unique<juce::AudioParameterFloat>("ratio","Mod Ratio",0.0f,1000.0f,5.0f),
 
     //Operator 1 Wavetype selection parameters 
-    std::make_unique<juce::AudioParameterChoice>("waveType1","Op 1 Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
+    std::make_unique<juce::AudioParameterChoice>("waveType1","Mod Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
 
      //Operator 2 Wavetype selection parameters 
-     std::make_unique<juce::AudioParameterChoice>("waveType2","Op 2 Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
+     std::make_unique<juce::AudioParameterChoice>("waveType2","Carrier Waveform",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
 
     //LFOs DSP Parameters 
 
     std::make_unique<juce::AudioParameterFloat>("lfoFreq1","LFO Ratio",0.05f,16.0f,1.0f),
 
     //LFOs Wavetype selection parameter
-     std::make_unique<juce::AudioParameterChoice>("lfowaveType1","LFO 1 Shape",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
+     std::make_unique<juce::AudioParameterChoice>("lfowaveType1","LFO Shape",juce::StringArray{"Sine","Triangle","Square", "Saw"},0),
 
 
     //Operator Envelope parameters

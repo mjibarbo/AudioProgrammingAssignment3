@@ -15,7 +15,6 @@ class Operator
 
 {
     enum class WaveType { Sine, Triangle, Square, Saw };
-    enum class Route { Op1Amount, Op1Ratio, Op2Amount, Op2Ratio };
 
 public: 
 
@@ -84,12 +83,6 @@ public:
        setWaveType(wavetype);
    }
 
-   void setRouteFromParameterPointer(int routeIn)
-   {
-
-       route = static_cast<Route>(routeIn);
-   }
-
 
    float process()
    {
@@ -115,7 +108,6 @@ private:
 
     Operator::WaveType wavetype;
 
-    Operator::Route route;
 
     float output;
 
