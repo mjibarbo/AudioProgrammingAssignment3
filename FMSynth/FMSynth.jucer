@@ -14,7 +14,7 @@
       <FILE id="kzFA6V" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="aHU9Hg" name="FMSynth.h" compile="0" resource="0" file="Source/FMSynth.h"/>
       <FILE id="KKeADp" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
-      <FILE id="W3GqSp" name="Operator.h" compile="0" resource="0" file="Source/Operator.h"/>
+      <FILE id="W3GqSp" name="Modulator.h" compile="0" resource="0" file="Source/Modulator.h"/>
       <FILE id="hhapFD" name="LFO.h" compile="0" resource="0" file="Source/LFO.h"/>
     </GROUP>
   </MAINGROUP>
